@@ -39,6 +39,7 @@
   <script src="./static/js/bulma-carousel.min.js"></script>
   <script src="./static/js/bulma-slider.min.js"></script>
   <script src="./static/js/index.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -173,7 +174,38 @@
 </section>
 
 
-
+<section class="section" id="leaderboard">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Model Leaderboard (Recall %)</h2>
+    <canvas id="leaderboard-chart" height="120"></canvas>
+  </div>
+</section>
+  
+<script>
+fetch('/static/data/leaderboard.json')
+  .then(res => res.json())
+  .then(({labels, values}) => {
+    new Chart(document.getElementById('leaderboard-chart'), {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Recall %',
+          data: values,
+          backgroundColor: 'rgba(54, 162, 235, 0.5)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: { beginAtZero: true, max: 100 }
+        }
+      }
+    });
+  })
+  .catch(console.error);
+</script>
 
 <section class="section">
   <div class="container is-max-desktop">
