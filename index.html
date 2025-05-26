@@ -40,6 +40,7 @@
   <script src="./static/js/bulma-slider.min.js"></script>
   <script src="./static/js/index.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
 </head>
 <body>
 
@@ -176,61 +177,92 @@
 
 <section class="section" id="leaderboard">
   <div class="container is-max-desktop">
-    <h2 class="title is-3">Model Leaderboard (Recall %)</h2>
-    <canvas id="leaderboard-chart" height="120"></canvas>
+    <h2 class="title is-3">Model Leaderboard</h2>
+    <div class="field has-addons is-justify-content-center mb-4">
+      <div class="control">
+        <div class="select">
+          <select id="metric-select">
+            <option value="recall">Recall %</option>
+            <option value="precision">Precision %</option>
+            <option value="pass@4">Pass@4 %</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="box" style="max-width:600px; margin:0 auto; border:1px solid #ddd; padding:1rem;">
+      <canvas id="leaderboard-chart" height="200"></canvas>
+    </div>
   </div>
 </section>
   
 <script>
-fetch('static/data/leaderboard.json')
-  .then(res => res.json())
-  .then(data => {
-    // pull arrays out of your `models` list
-    const labels    = data.models.map(m => m.name);
-    const recall    = data.models.map(m => m.recall);
-    const precision = data.models.map(m => m.precision);
-    const pass4     = data.models.map(m => m['pass@4']);
+  // Register the datalabels plugin
+  Chart.register(ChartDataLabels);
+
+  let rawData = [];
+  let chart = null;
+
+  // Load once
+  fetch('static/data/leaderboard.json')
+    .then(r => r.json())
+    .then(data => {
+      rawData = data.models;
+      drawChart('recall');
+    })
+    .catch(err => console.error('Could not load leaderboard.json:', err));
+
+  // Redraw on metric change
+  document
+    .getElementById('metric-select')
+    .addEventListener('change', e => drawChart(e.target.value));
+
+  function drawChart(metric) {
+    // Sort descending by chosen metric
+    const sorted = [...rawData].sort((a, b) => b[metric] - a[metric]);
+    const labels = sorted.map(m => m.name);
+    const values = sorted.map(m => m[metric]);
+    const maxVal = Math.max(...values);
+
+    // Destroy old chart if exists
+    if (chart) chart.destroy();
 
     const ctx = document
       .getElementById('leaderboard-chart')
       .getContext('2d');
 
-    new Chart(ctx, {
+    chart = new Chart(ctx, {
       type: 'bar',
       data: {
         labels,
-        datasets: [
-          {
-            label: 'Recall %',
-            data: recall,
-            backgroundColor: 'rgba(54,162,235,0.5)',
-            borderColor:     'rgba(54,162,235,1)',
-            borderWidth: 1
-          },
-          {
-            label: 'Precision %',
-            data: precision,
-            backgroundColor: 'rgba(75,192,192,0.5)',
-            borderColor:     'rgba(75,192,192,1)',
-            borderWidth: 1
-          },
-          {
-            label: 'Pass@4 %',
-            data: pass4,
-            backgroundColor: 'rgba(255,205,86,0.5)',
-            borderColor:     'rgba(255,205,86,1)',
-            borderWidth: 1
-          }
-        ]
+        datasets: [{
+          label: metric.replace('@4','@4 ') + ' %',
+          data: values,
+          backgroundColor: 'rgba(54,162,235,0.5)',
+          borderColor:     'rgba(54,162,235,1)',
+          borderWidth: 1
+        }]
       },
       options: {
         scales: {
-          y: { beginAtZero: true, max: 100 }
+          y: {
+            beginAtZero: true,
+            max: maxVal + 10
+          }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: true },
+          datalabels: {
+            anchor: 'end',
+            align: 'start',
+            formatter: val => val.toFixed(1) + '%',
+            font: { weight: 'bold' }
+          }
         }
       }
     });
-  })
-  .catch(err => console.error('Failed to load leaderboard.json:', err));
+  }
 </script>
 
 
