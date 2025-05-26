@@ -175,6 +175,65 @@
 </section>
 
 
+  <!-- 1) The big, fun button -->
+<div class="has-text-centered mb-5">
+  <button
+    id="show-leaderboard-btn"
+    class="button is-primary is-large">
+    🚀 See Top Performing Models 🌟
+  </button>
+</div>
+
+<!-- 2) Hide this section until the button is clicked -->
+<section
+  class="section is-hidden"
+  id="leaderboard">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-left">Model Leaderboard</h2>
+    <div
+      class="box"
+      style="border:1px solid #ddd; padding:1rem; max-width:1000px; margin:0 auto;">
+      <div class="columns">
+        <!-- Recall -->
+        <div class="column">
+          <h3 class="subtitle is-5 has-text-centered">Recall %</h3>
+          <div style="height:250px;">
+            <canvas id="chart-recall"></canvas>
+          </div>
+        </div>
+        <!-- Precision -->
+        <div class="column">
+          <h3 class="subtitle is-5 has-text-centered">Precision %</h3>
+          <div style="height:250px;">
+            <canvas id="chart-precision"></canvas>
+          </div>
+        </div>
+        <!-- Pass@4 -->
+        <div class="column">
+          <h3 class="subtitle is-5 has-text-centered">Pass@4 %</h3>
+          <div style="height:250px;">
+            <canvas id="chart-pass4"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document
+    .getElementById('show-leaderboard-btn')
+    .addEventListener('click', function() {
+      // reveal the section
+      const lb = document.getElementById('leaderboard');
+      lb.classList.remove('is-hidden');
+      // scroll it into view smoothly
+      lb.scrollIntoView({ behavior: 'smooth' });
+      // optionally hide the button itself
+      this.style.display = 'none';
+    });
+</script>
+  
 <section class="section">
   <div class="container is-max-desktop">
     <!-- Abstract. -->
@@ -207,115 +266,6 @@ capabilities and the requirements for dependable AI-assisted academic verificati
 
   </div>
 </section>
-
-<section class="section" id="leaderboard">
-  <div class="container is-max-desktop">
-    <!-- LEFT-ALIGNED TITLE -->
-    <h3 class="title is-3 has-text-left">Top Performing Models on SPOT</h3>
-
-    <!-- SINGLE BORDER -->
-    <div class="box" style="border:1px solid #ddd; padding:1rem; max-width:1000px; margin:0 auto;">
-      <div class="columns">
-        <!-- Recall -->
-        <div class="column">
-          <h3 class="subtitle is-5 has-text-centered">Recall %</h3>
-          <div style="height:250px;">
-            <canvas id="chart-recall"></canvas>
-          </div>
-        </div>
-        <!-- Precision -->
-        <div class="column">
-          <h3 class="subtitle is-5 has-text-centered">Precision %</h3>
-          <div style="height:250px;">
-            <canvas id="chart-precision"></canvas>
-          </div>
-        </div>
-        <!-- Pass@4 -->
-        <div class="column">
-          <h3 class="subtitle is-5 has-text-centered">Pass@4 %</h3>
-          <div style="height:250px;">
-            <canvas id="chart-pass4"></canvas>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<script>
-  // register the datalabels plugin
-  Chart.register(ChartDataLabels);
-
-  // config for each metric
-  const configs = {
-    recall:    { canvas: 'chart-recall',    bg: 'rgba(54,162,235,0.5)',  border: 'rgba(54,162,235,1)'  },
-    precision: { canvas: 'chart-precision', bg: 'rgba(75,192,192,0.5)', border: 'rgba(75,192,192,1)' },
-    'pass@4':  { canvas: 'chart-pass4',     bg: 'rgba(255,205,86,0.5)', border: 'rgba(255,205,86,1)' }
-  };
-
-  fetch('static/data/leaderboard.json')
-    .then(r => r.json())
-    .then(({ models }) => {
-      // for each metric, draw a horizontal bar chart
-      Object.keys(configs).forEach(metric => {
-        const { canvas, bg, border } = configs[metric];
-
-        // sort descending
-        const sorted = [...models].sort((a,b) => b[metric] - a[metric]);
-
-        // full names & short names
-        const fullNames  = sorted.map(m => m.name);
-        const shortNames = fullNames.map(n => n.split(' (')[0]);
-        const dataValues = sorted.map(m => m[metric]);
-        const maxVal     = Math.max(...dataValues);
-
-        new Chart(
-          document.getElementById(canvas).getContext('2d'),
-          {
-            type: 'bar',
-            data: {
-              labels: shortNames,
-              datasets: [{
-                data: dataValues,
-                backgroundColor: bg,
-                borderColor:     border,
-                borderWidth: 1
-              }]
-            },
-            options: {
-              indexAxis: 'y',               // horizontal bars
-              maintainAspectRatio: false,   // CSS sizing
-              scales: {
-                x: {                        // numeric axis
-                  beginAtZero: true,
-                  max: maxVal + 10
-                },
-                y: {                        // category axis
-                  ticks: { font: { size: 11 } }
-                }
-              },
-              plugins: {
-                legend:   { display: false },
-                tooltip:  {
-                  callbacks: {
-                    // show full model name when hovering
-                    title: items => [ fullNames[items[0].dataIndex] ]
-                  }
-                },
-                datalabels: {
-                  anchor: 'end',   // attach to end of bar
-                  align:  'end',   // push outside to the right
-                  formatter: v => v.toFixed(1) + '%',
-                  font: { weight: 'bold' }
-                }
-              }
-            }
-          }
-        );
-      });
-    })
-    .catch(console.error);
-</script>
 
 
 
