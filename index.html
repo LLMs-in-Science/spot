@@ -272,13 +272,6 @@ capabilities and the requirements for dependable AI-assisted academic verificati
   <div class="container is-max-desktop">
     <h2 class="title is-4 has-text-left">🔍 Creating SPOT</h2>
     <div class="content">
-      <p>
-        We begin by <strong>Stage 1 – Seed Collection</strong>, harvesting manuscripts flagged for critical errors from two primary sources: <em>WithdrarXiv</em> (self-retractions and errata comments) and PubPeer (post-publication peer reviews).  We extract entries annotated as factual, methodological, or other critical mistakes, scrape each paper’s metadata and full comments, then prune low-yield repositories (medRxiv/bioRxiv) to focus on high-signal samples.
-      </p>
-      <p>
-        Next, in <strong>Stage 2</strong>, we run two GPT-4o filtering passes to isolate comments that point to a specific section, figure, equation, or table and drop those requiring external artifacts.  We then move to <strong>Stage 3</strong> author validation—only keeping errors explicitly confirmed by the original authors—and <strong>Stage 4</strong> human sanity checks, where annotators verify self-containment, identifiability, and author acknowledgement.  Finally, in <strong>Stage 5 – Normalization</strong>, we convert each PDF into text and images via Llama-Parse + GPT-4.1 refinement, ensuring high-fidelity OCR and visual captures of every figure, table, and equation.
-      </p>
-
       <figure class="image is-3by1">
         <img src="static/images/spot.png"
              alt="Diagram of the SPOT data curation pipeline stages">
@@ -286,11 +279,48 @@ capabilities and the requirements for dependable AI-assisted academic verificati
           Figure: Overview of the five–stage SPOT data curation process.
         </figcaption>
       </figure>
+      
+      <p>
+        We begin by <strong>Stage 1 – Seed Collection</strong>, harvesting manuscripts flagged for critical errors from two primary sources: <em>WithdrarXiv</em> (self-retractions and errata comments) and PubPeer (post-publication peer reviews).  We extract entries annotated as factual, methodological, or other critical mistakes, scrape each paper’s metadata and full comments, then prune low-yield repositories (medRxiv/bioRxiv) to focus on high-signal samples.
+      </p>
+      <p>
+        Next, in <strong>Stage 2</strong>, we run two GPT-4o filtering passes to isolate comments that point to a specific section, figure, equation, or table and drop those requiring external artifacts.  We then move to <strong>Stage 3</strong> author validation—only keeping errors explicitly confirmed by the original authors—and <strong>Stage 4</strong> human sanity checks, where annotators verify self-containment, identifiability, and author acknowledgement.  Finally, in <strong>Stage 5 – Normalization</strong>, we convert each PDF into text and images via Llama-Parse + GPT-4.1 refinement, ensuring high-fidelity OCR and visual captures of every figure, table, and equation.
+      </p>
+
+      
     </div>
   </div>
 </section>
 
 
+  <section id="miscalibration" class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-4 has-text-left">⚠️ Unreliability of Miscalibrated Models</h2>
+    <div class="content">
+      <figure class="image is-3by1">
+        <img src="static/images/confidence.png"
+             alt="Density and scatter plots showing model confidence vs. pass@4 for six LLMs on SPOT">
+        <figcaption class="has-text-centered is-size-7 mt-2">
+          Figure 4 – Category-specific performance and calibration of six LLMs on SPOT.  
+          Left: Kernel density estimates of reported confidence (all cluster near zero).  
+          Right: Scatter of mean reported confidence vs. <code>pass@4</code> per model (dashed line = perfect calibration).
+        </figcaption>
+      </figure>
+      
+      <p>
+        Alongside <code>pass@4</code>, <strong>calibration</strong> (e.g. Guo et al. 2017; Ovadia et al. 2019) tells us how much to trust a model’s own confidence estimates.  
+        In scientific error detection—where chasing false positives can cost serious time and effort—knowing when to believe a model is crucial.  
+        We therefore compare each model’s actual average <code>pass@4</code> rate against its self-reported confidence (see Appendix ref for details).
+      </p>
+      <p>
+        However, as shown in Figure 4 (right), confidence correlates only weakly with <code>pass@4</code>, and the density plots on the left reveal that all models report very low confidence, clustering near zero.  
+        Across 498 model–instance evaluations (83 instances × 6 models), we observe just two cases of full (100%) confidence—both from o3—underscoring that today’s LLMs remain largely unreliable for spotting real errors in scientific manuscripts.
+      </p>
+    </div>
+  </div>
+</section>
+
+  
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
     <h2 class="title">BibTeX</h2>
