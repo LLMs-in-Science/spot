@@ -35,6 +35,18 @@
       "precision": 3.2,
       "recall": 5.8,
       "pass@4": 14.1
+    },
+    {
+      "name": "Claude-4-Sonnet",
+      "precision": 11.3,
+      "recall": 11.2,
+      "pass@4": 22.9
+    },
+    {
+      "name": "Claude-4-Opus",
+      "precision": 5.0,
+      "recall": 6.9,
+      "pass@4": 13.3
     }
   ]
 }
