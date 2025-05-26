@@ -304,7 +304,7 @@ capabilities and the requirements for dependable AI-assisted academic verificati
     <p>
       <strong>Precision</strong> = TP / (TP + FP) penalizes spurious flags,  
       while <strong>Recall</strong> = TP / (TP + FN) penalizes missed detections.  
-      To measure multi‐attempt gains, we report <code>pass@1</code> and <code>pass@4</code> over eight independent runs, bootstrapped 1,000×.
+      To measure multi‐attempt gains, we report <code>pass@1</code> and <code>pass@4</code> over eight independent runs.
     </p>
 
     <!-- 2) Main results table -->
@@ -316,8 +316,11 @@ capabilities and the requirements for dependable AI-assisted academic verificati
 
     <!-- 3) Highlight key takeaways -->
     <p>
-      While o3 exceeds 80 % on general STEM benchmarks, its performance on HLE (hard, frontier-level questions) and on SPOT hovers around 20 %, underscoring the challenge of spotting real errors in scientific manuscripts.  
-      Notably, reasoning-focused models excel at equations but consistently falter on figure analysis, revealing a critical blind spot for AI Co-Scientists.
+      Even the strongest model, o3, achieves only 21.1 % recall and 6.1 % precision on SPOT, underscoring the challenge of automatically pinpointing real errors in full‐length scientific manuscripts. Open‐source counterparts like Qwen-2.5-VL-72B and Llama-4-Maverick collapse to near-zero performance.  This shows that while neither proprietary nor open-source models fully satisfy the requirements of practical deployments of error-detecting AI systems, open-source models lag far behind in domain-specific rigor and robust error-detection capabilities essential for scientific applications.
+    </p>
+
+     <p>
+      Notably, reasoning models show strong performance in the Equation/Proof category, o3 leads with a 62.6 % pass@4 rate, followed by Gemini-2.5-Pro at 36.4 %, with all others below 5 %. However, they fall short on visual tasks: GPT-4.1 tops Figure Duplication at 44.4 %, while o3 and Gemini-2.5-Pro score 0 %. This contrast reveals that, despite impressive reasoning capablities on text, current reasoning LLMs show poor performance in grounding multimodal figure analysis.
     </p>
   </div>
 </section>
