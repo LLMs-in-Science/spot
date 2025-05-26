@@ -301,19 +301,11 @@ capabilities and the requirements for dependable AI-assisted academic verificati
         Alongside <code>pass@4</code>, <strong>calibration</strong> tells us how much to trust a model’s own confidence estimates.  
         In scientific error detection, where chasing false positives can cost serious time and effort, knowing when to believe a model is crucial.  
       </p>
-      
-      <figure class="image is-3by1">
-        <object 
-          data="static/images/confidence.pdf" 
-          type="application/pdf" 
-          width="100%" 
-          height="400px">
-          <!-- fallback for browsers that don’t support <object> -->
-          <p>Your browser doesn’t support embedded PDFs. 
-             <a href="./static/images/figure-confidence.pdf">Download the PDF</a>.</p>
-        </object>
+      <figure class="image" style="max-width: 800px; margin: 0 auto;">
+        <img src="static/images/confidence.png" 
+          style="width: 100%; height: auto;"
+             alt="Density and scatter plots showing model confidence vs. pass@4 for six LLMs on SPOT">
       </figure>
-      
       <p>
         However, as shown in Figure 4 (right), confidence correlates only weakly with <code>pass@4</code>, and the density plots on the left reveal that all models report very low confidence, clustering near zero.  
         Across 498 model–instance evaluations (83 instances × 6 models), we observe just two cases of full (100%) confidence (both from o3), underscoring that today’s LLMs remain largely unreliable for spotting real errors in scientific manuscripts.
