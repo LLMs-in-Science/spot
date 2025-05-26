@@ -182,20 +182,46 @@
 </section>
   
 <script>
-fetch('/static/data/leaderboard.json')
+fetch('static/data/leaderboard.json')
   .then(res => res.json())
-  .then(({labels, values}) => {
-    new Chart(document.getElementById('leaderboard-chart'), {
+  .then(data => {
+    // pull arrays out of your `models` list
+    const labels    = data.models.map(m => m.name);
+    const recall    = data.models.map(m => m.recall);
+    const precision = data.models.map(m => m.precision);
+    const pass4     = data.models.map(m => m['pass@4']);
+
+    const ctx = document
+      .getElementById('leaderboard-chart')
+      .getContext('2d');
+
+    new Chart(ctx, {
       type: 'bar',
       data: {
         labels,
-        datasets: [{
-          label: 'Recall %',
-          data: values,
-          backgroundColor: 'rgba(54, 162, 235, 0.5)',
-          borderColor: 'rgba(54, 162, 235, 1)',
-          borderWidth: 1
-        }]
+        datasets: [
+          {
+            label: 'Recall %',
+            data: recall,
+            backgroundColor: 'rgba(54,162,235,0.5)',
+            borderColor:     'rgba(54,162,235,1)',
+            borderWidth: 1
+          },
+          {
+            label: 'Precision %',
+            data: precision,
+            backgroundColor: 'rgba(75,192,192,0.5)',
+            borderColor:     'rgba(75,192,192,1)',
+            borderWidth: 1
+          },
+          {
+            label: 'Pass@4 %',
+            data: pass4,
+            backgroundColor: 'rgba(255,205,86,0.5)',
+            borderColor:     'rgba(255,205,86,1)',
+            borderWidth: 1
+          }
+        ]
       },
       options: {
         scales: {
@@ -204,8 +230,9 @@ fetch('/static/data/leaderboard.json')
       }
     });
   })
-  .catch(console.error);
+  .catch(err => console.error('Failed to load leaderboard.json:', err));
 </script>
+
 
 <section class="section">
   <div class="container is-max-desktop">
