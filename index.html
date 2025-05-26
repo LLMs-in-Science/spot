@@ -322,6 +322,100 @@ capabilities and the requirements for dependable AI-assisted academic verificati
   </div>
 </section>
 
+  <section id="case-studies" class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">📚 Detailed Case Studies</h2>
+
+    <!-- Mathematics Case Study -->
+    <div class="box">
+      <h3 class="title is-4">Mathematics: Petersen and Tommas (2024)</h3>
+
+      <!-- Model Generations -->
+      <div class="box">
+        <h4 class="subtitle is-5">o3’s Feedback</h4>
+        <div class="notification is-primary">
+          Eichler–Shimura is quoted as <code>H¹(M₁,₁,Vₗ) ≅ S_{ℓ+2} ⊕ ℚ(−1−ℓ)</code>,  
+          but the Tate (Eisenstein) summand should be <code>ℚ(−1)</code>, independent of ℓ.  
+          The extra “<code>−ℓ</code>” is a mis-twist.
+        </div>
+      </div>
+      <div class="box">
+        <h4 class="subtitle is-5">Gemini-2.5-Pro’s Feedback</h4>
+        <div class="notification is-info">
+          The stated result <code>H¹(M₂, V(2,2)) = ℚ(−3)</code> contradicts the Gysin‐sequence derivation.  
+          One finds instead <code>H¹(M₂, V(2,2)) = 0</code> after tracking  
+          <code>H⁰(A₁,₁, V(2,2))(−1) → H²(A₂)</code>, implying no non-zero cohomology.
+        </div>
+      </div>
+
+      <!-- Analysis Toggle -->
+      <div class="has-text-centered">
+        <button class="button is-link is-light" data-target="analysis-math">
+          🔍 Show Math Analysis
+        </button>
+      </div>
+      <div id="analysis-math" class="content is-hidden mt-3">
+        <p>
+          Ironically, both models only flagged Section 3—exactly the part <em>unrelated</em> to the true gap in Theorems 1.8 and 1.13.  
+          o3 hallucinated a twist error where none exists, while Gemini-2.5-Pro mis-applied a Gysin argument,  
+          reflecting student-level slips rather than the genuine logical hole that prompted the withdrawal.
+        </p>
+      </div>
+    </div>
+
+    <!-- Materials Science Case Study -->
+    <div class="box">
+      <h3 class="title is-4">Materials Science: Ye et al. (2025)</h3>
+
+      <!-- Model Generations -->
+      <div class="box">
+        <h4 class="subtitle is-5">o3’s Feedback</h4>
+        <div class="notification is-primary">
+          Optimal TfOH concentration is stated as 0.006–0.016 M, yet all syntheses use 0.2 M.  
+          This inconsistency invalidates the universality of the claimed optimum.
+        </div>
+      </div>
+      <div class="box">
+        <h4 class="subtitle is-5">Gemini-2.5-Pro’s Feedback</h4>
+        <div class="notification is-info">
+          <strong>(A)</strong> Indexed PXRD peaks incorrectly attribute facets to TAPPy-TFPPy-COF instead of TAPPy-BPTC-COF.<br><br>
+          <strong>(B)</strong> The BET surface area is listed as <code>1606 cm² g⁻¹</code> rather than  
+          <code>1606 m² g⁻¹</code>, a 10,000× unit error.
+        </div>
+      </div>
+
+      <!-- Analysis Toggle -->
+      <div class="has-text-centered">
+        <button class="button is-link is-light" data-target="analysis-mat">
+          🔍 Show Materials Analysis
+        </button>
+      </div>
+      <div id="analysis-mat" class="content is-hidden mt-3">
+        <p>
+          In (A), o3 misreads context and swaps COF identities, a simple parsing slip.  
+          In (B), Gemini-2.5-Pro correctly spots a genuine typo in units—our only unannotated real error  
+          uncovered by an LLM.  This juxtaposition shows that while complex math fooled both models,  
+          a straightforward data-reporting mistake can still be caught.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Toggle show/hide for analysis blocks
+  document.querySelectorAll('button[data-target]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.getAttribute('data-target'));
+      target.classList.toggle('is-hidden');
+      btn.textContent = target.classList.contains('is-hidden')
+        ? btn.textContent.replace('Hide', 'Show')
+        : btn.textContent.replace('Show', 'Hide');
+    });
+  });
+</script>
+
+  
   
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
