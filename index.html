@@ -175,97 +175,6 @@
 </section>
 
 
-<section class="section" id="leaderboard">
-  <div class="container is-max-desktop">
-    <h2 class="title is-3">Model Leaderboard</h2>
-    <div class="field has-addons is-justify-content-center mb-4">
-      <div class="control">
-        <div class="select">
-          <select id="metric-select">
-            <option value="recall">Recall %</option>
-            <option value="precision">Precision %</option>
-            <option value="pass@4">Pass@4 %</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <div class="box" style="max-width:600px; margin:0 auto; border:1px solid #ddd; padding:1rem;">
-      <canvas id="leaderboard-chart" height="200"></canvas>
-    </div>
-  </div>
-</section>
-  
-<script>
-  // Register the datalabels plugin
-  Chart.register(ChartDataLabels);
-
-  let rawData = [];
-  let chart = null;
-
-  // Load once
-  fetch('static/data/leaderboard.json')
-    .then(r => r.json())
-    .then(data => {
-      rawData = data.models;
-      drawChart('recall');
-    })
-    .catch(err => console.error('Could not load leaderboard.json:', err));
-
-  // Redraw on metric change
-  document
-    .getElementById('metric-select')
-    .addEventListener('change', e => drawChart(e.target.value));
-
-  function drawChart(metric) {
-    // Sort descending by chosen metric
-    const sorted = [...rawData].sort((a, b) => b[metric] - a[metric]);
-    const labels = sorted.map(m => m.name);
-    const values = sorted.map(m => m[metric]);
-    const maxVal = Math.max(...values);
-
-    // Destroy old chart if exists
-    if (chart) chart.destroy();
-
-    const ctx = document
-      .getElementById('leaderboard-chart')
-      .getContext('2d');
-
-    chart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels,
-        datasets: [{
-          label: metric.replace('@4','@4 ') + ' %',
-          data: values,
-          backgroundColor: 'rgba(54,162,235,0.5)',
-          borderColor:     'rgba(54,162,235,1)',
-          borderWidth: 1
-        }]
-      },
-      options: {
-        scales: {
-          y: {
-            beginAtZero: true,
-            max: maxVal + 10
-          }
-        },
-        plugins: {
-          legend: { display: false },
-          tooltip: { enabled: true },
-          datalabels: {
-            anchor: 'end',
-            align: 'start',
-            formatter: val => val.toFixed(1) + '%',
-            font: { weight: 'bold' }
-          }
-        }
-      }
-    });
-  }
-</script>
-
-
 <section class="section">
   <div class="container is-max-desktop">
     <!-- Abstract. -->
@@ -299,7 +208,95 @@ capabilities and the requirements for dependable AI-assisted academic verificati
   </div>
 </section>
 
+<section class="section" id="leaderboard">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Model Leaderboard</h2>
 
+    <div class="columns">
+      <div class="column is-one-third">
+        <div class="box" style="border:1px solid #ddd; padding:1rem;">
+          <h3 class="subtitle is-5 has-text-centered">Recall %</h3>
+          <canvas id="chart-recall" height="200"></canvas>
+        </div>
+      </div>
+      <div class="column is-one-third">
+        <div class="box" style="border:1px solid #ddd; padding:1rem;">
+          <h3 class="subtitle is-5 has-text-centered">Precision %</h3>
+          <canvas id="chart-precision" height="200"></canvas>
+        </div>
+      </div>
+      <div class="column is-one-third">
+        <div class="box" style="border:1px solid #ddd; padding:1rem;">
+          <h3 class="subtitle is-5 has-text-centered">Pass@4 %</h3>
+          <canvas id="chart-pass4" height="200"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // register datalabels plugin
+  Chart.register(ChartDataLabels);
+
+  // mapping metric → canvas id & color
+  const configs = {
+    recall:    { canvas: 'chart-recall',    color: 'rgba(54,162,235,0.5)', border: 'rgba(54,162,235,1)' },
+    precision: { canvas: 'chart-precision', color: 'rgba(75,192,192,0.5)', border: 'rgba(75,192,192,1)' },
+    'pass@4':  { canvas: 'chart-pass4',     color: 'rgba(255,205,86,0.5)', border: 'rgba(255,205,86,1)' }
+  };
+
+  fetch('static/data/leaderboard.json')
+    .then(r => r.json())
+    .then(({ models }) => {
+      // for each metric, sort and draw
+      for (let metric of Object.keys(configs)) {
+        const { canvas, color, border } = configs[metric];
+
+        // sort descending
+        const sorted = [...models].sort((a,b) => b[metric] - a[metric]);
+        const labels = sorted.map(m=>m.name);
+        const data   = sorted.map(m=>m[metric]);
+        const maxVal = Math.max(...data);
+
+        new Chart(
+          document.getElementById(canvas).getContext('2d'),
+          {
+            type: 'bar',
+            data: {
+              labels,
+              datasets: [{
+                label: metric.replace('@4','@4 ') + ' %',
+                data,
+                backgroundColor: color,
+                borderColor: border,
+                borderWidth: 1
+              }]
+            },
+            options: {
+              scales: {
+                y: {
+                  beginAtZero: true,
+                  max: maxVal + 10
+                }
+              },
+              plugins: {
+                legend: { display: false },
+                tooltip: { enabled: true },
+                datalabels: {
+                  anchor: 'end',
+                  align: 'start',
+                  formatter: v => v.toFixed(1) + '%',
+                  font: { weight: 'bold' }
+                }
+              }
+            }
+          }
+        );
+      }
+    })
+    .catch(console.error);
+</script>
 
 
 
