@@ -315,5 +315,86 @@ capabilities and the requirements for dependable AI-assisted academic verificati
   </div>
 </footer>
 
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+  // 0) Grab the canvases up front
+  const ctxRecall    = document.getElementById('chart-recall').getContext('2d');
+  const ctxPrecision = document.getElementById('chart-precision').getContext('2d');
+  const ctxPass4     = document.getElementById('chart-pass4').getContext('2d');
+
+  // 1) register the datalabels plugin
+  Chart.register(ChartDataLabels);
+
+  // 2) metric → canvas context + colors
+  const configs = {
+    recall:    { ctx: ctxRecall,    bg:'rgba(54,162,235,0.5)',  border:'rgba(54,162,235,1)'  },
+    precision: { ctx: ctxPrecision, bg:'rgba(75,192,192,0.5)', border:'rgba(75,192,192,1)' },
+    'pass@4':  { ctx: ctxPass4,     bg:'rgba(255,205,86,0.5)', border:'rgba(255,205,86,1)' }
+  };
+
+  // 3) load the data
+  fetch('static/data/leaderboard.json')
+    .then(res => res.json())
+    .then(({ models }) => {
+      // once loaded, draw all charts
+      Object.entries(configs).forEach(([metric, {ctx,bg,border}]) => {
+        // sort descending
+        const sorted = [...models].sort((a,b)=>b[metric]-a[metric]);
+        const fullNames  = sorted.map(m=>m.name);
+        const labels     = fullNames.map(n=>n.split(' (')[0]);
+        const values     = sorted.map(m=>m[metric]);
+        const maxVal     = Math.max(...values);
+
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [{
+              data: values,
+              backgroundColor: bg,
+              borderColor:     border,
+              borderWidth: 1
+            }]
+          },
+          options: {
+            indexAxis: 'y',
+            maintainAspectRatio: false,
+            scales: {
+              x: { beginAtZero:true, max: maxVal + 10 },
+              y: { ticks:{ font:{size:11} } }
+            },
+            plugins: {
+              legend:{display:false},
+              tooltip:{
+                callbacks:{
+                  title: items => [ fullNames[items[0].dataIndex] ]
+                }
+              },
+              datalabels:{
+                anchor:'end',
+                align:'end',
+                formatter:v=>v.toFixed(1)+'%',
+                font:{ weight:'bold' }
+              }
+            }
+          }
+        });
+      });
+    })
+    .catch(err => console.error('Leaderboard JSON load failed:', err));
+
+  // 4) your button logic to un-hide it
+  document
+    .getElementById('show-leaderboard-btn')
+    .addEventListener('click', function() {
+      const lb = document.getElementById('leaderboard');
+      lb.classList.remove('is-hidden');
+      lb.scrollIntoView({behavior:'smooth'});
+      this.style.display = 'none';
+    });
+});
+</script>
+
+  
 </body>
 </html>
