@@ -343,15 +343,23 @@ capabilities and the requirements for dependable AI-assisted academic verificati
       <!-- Analysis Toggle -->
       <div class="has-text-centered">
         <button class="button is-link is-light" data-target="analysis-math">
-          🔍 Show Math Analysis
+          🔍 Show Expert Analysis
         </button>
       </div>
       <div id="analysis-math" class="content is-hidden mt-3">
         <p>
-          Ironically, both models only flagged Section 3—exactly the part <em>unrelated</em> to the true gap in Theorems 1.8 and 1.13.  
-          o3 hallucinated a twist error where none exists, while Gemini-2.5-Pro mis-applied a Gysin argument,  
-          reflecting student-level slips rather than the genuine logical hole that prompted the withdrawal.
+          Both o3 and Gemini-2.5-Pro exclusively flag issues in Section 3. 
+          Ironically, this is the only part of the manuscript <strong>not</strong> affected by the actual mathematical gap. 
+          o3 criticizes the calculation of <code>H^k(M_{1,1}, V_\ell)</code> in Section 3.3, claiming that the use of Eichler-Shimura isomorphism is wrong without giving too much details. 
+          But there is no mistake in this part and the claim is hallucinated. 
+          It is worth noting that applying Eichler-Shimura isomorphism in a similar context as the paper is exceedingly rare in internet data. 
+          The formula may also appear differently than how the Eichler-Shimura isomorphism is presented in common internet sources, whose equivalence requires genuine understanding of multiple subjects, such as variation of Hodge structures and the theory of modular forms.
         </p>
+
+        <p>
+          On the other hand, Gemini-2.5-Pro tackles Theorem 3.8. 
+          Despite doing reasonable calculations, the model makes a false claim on <code>H^0(A_{1,1}, V(2,2))(-1)</code>code>, resembling mistakes students could make after recollecting a wrong fact.
+          </p> 
       </div>
     </div>
 
@@ -384,11 +392,17 @@ capabilities and the requirements for dependable AI-assisted academic verificati
       </div>
       <div id="analysis-mat" class="content is-hidden mt-3">
         <p>
-          In (A), o3 misreads context and swaps COF identities, a simple parsing slip.  
-          In (B), Gemini-2.5-Pro correctly spots a genuine typo in units—our only unannotated real error  
-          uncovered by an LLM.  This juxtaposition shows that while complex math fooled both models,  
-          a straightforward data-reporting mistake can still be caught.
+          Errors pointed out by o3 exemplify failures in both long-range context comprehension and multi-hop reasoning.
+          o3 does not realize that the optimal concentration value reported by the authors (0.006–0.016 M) is the concentration of the final mixture, while the the second value (0.2M) is the concentration of the acid before being added to the final mixture. 
+          This misunderstanding likely arises because the optimal concentration in the final mixture is mentioned only once, and the explicit calculation is not shown throughout the manuscript. 
+          As a result, o3, having seen references only to the concentration before mixture, fails to infer the relationship between the two values.
         </p>
+
+         <p>
+            In (A), Gemini 2.5 Pro seems to make a "reading" mistake, attributing the second facet pair to TAPPy-TFPPy-COF when it in fact describes TAPPy-BPTC-COF. 
+           Notably, however, in (B), it notices a potential error in the units, where a certain compound was assigned a surface area 10000x smaller than all the other compounds in the same family. 
+           Because the authors do not mention this extreme property of this material, we suspect that this is a real typo.
+           </p>
       </div>
     </div>
   </div>
