@@ -210,25 +210,30 @@ capabilities and the requirements for dependable AI-assisted academic verificati
 
 <section class="section" id="leaderboard">
   <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered">Model Leaderboard</h2>
-
-    <div class="columns">
-      <div class="column is-one-third">
-        <div class="box" style="border:1px solid #ddd; padding:1rem;">
+    <h2 class="title is-3 has-text-centered">Top Performing Models</h2>
+    <!-- Single border wrapping all three -->
+    <div class="box" style="border:1px solid #ddd; padding:1rem; max-width:1000px; margin:0 auto;">
+      <div class="columns">
+        <!-- Recall -->
+        <div class="column">
           <h3 class="subtitle is-5 has-text-centered">Recall %</h3>
-          <canvas id="chart-recall" height="200"></canvas>
+          <div style="height:250px;">
+            <canvas id="chart-recall"></canvas>
+          </div>
         </div>
-      </div>
-      <div class="column is-one-third">
-        <div class="box" style="border:1px solid #ddd; padding:1rem;">
+        <!-- Precision -->
+        <div class="column">
           <h3 class="subtitle is-5 has-text-centered">Precision %</h3>
-          <canvas id="chart-precision" height="200"></canvas>
+          <div style="height:250px;">
+            <canvas id="chart-precision"></canvas>
+          </div>
         </div>
-      </div>
-      <div class="column is-one-third">
-        <div class="box" style="border:1px solid #ddd; padding:1rem;">
+        <!-- Pass@4 -->
+        <div class="column">
           <h3 class="subtitle is-5 has-text-centered">Pass@4 %</h3>
-          <canvas id="chart-pass4" height="200"></canvas>
+          <div style="height:250px;">
+            <canvas id="chart-pass4"></canvas>
+          </div>
         </div>
       </div>
     </div>
@@ -236,27 +241,28 @@ capabilities and the requirements for dependable AI-assisted academic verificati
 </section>
 
 <script>
-  // register datalabels plugin
+  // Register datalabels plugin
   Chart.register(ChartDataLabels);
 
-  // mapping metric → canvas id & color
+  // Map metrics to canvas IDs & colors
   const configs = {
-    recall:    { canvas: 'chart-recall',    color: 'rgba(54,162,235,0.5)', border: 'rgba(54,162,235,1)' },
+    recall:    { canvas: 'chart-recall',    color: 'rgba(54,162,235,0.5)',  border: 'rgba(54,162,235,1)'  },
     precision: { canvas: 'chart-precision', color: 'rgba(75,192,192,0.5)', border: 'rgba(75,192,192,1)' },
     'pass@4':  { canvas: 'chart-pass4',     color: 'rgba(255,205,86,0.5)', border: 'rgba(255,205,86,1)' }
   };
 
+  // Fetch your JSON once
   fetch('static/data/leaderboard.json')
     .then(r => r.json())
     .then(({ models }) => {
-      // for each metric, sort and draw
+      // Draw one horizontal bar chart per metric
       for (let metric of Object.keys(configs)) {
         const { canvas, color, border } = configs[metric];
 
-        // sort descending
+        // Sort descending
         const sorted = [...models].sort((a,b) => b[metric] - a[metric]);
-        const labels = sorted.map(m=>m.name);
-        const data   = sorted.map(m=>m[metric]);
+        const labels = sorted.map(m => m.name);
+        const data   = sorted.map(m => m[metric]);
         const maxVal = Math.max(...data);
 
         new Chart(
@@ -274,15 +280,21 @@ capabilities and the requirements for dependable AI-assisted academic verificati
               }]
             },
             options: {
+              indexAxis: 'y',              // horizontal bars
+              maintainAspectRatio: false,  // allow CSS sizing
               scales: {
-                y: {
+                x: {                       // numeric axis
                   beginAtZero: true,
                   max: maxVal + 10
+                },
+                y: {                       // category axis
+                  ticks: {
+                    font: { size: 11 }
+                  }
                 }
               },
               plugins: {
                 legend: { display: false },
-                tooltip: { enabled: true },
                 datalabels: {
                   anchor: 'end',
                   align: 'start',
@@ -297,7 +309,6 @@ capabilities and the requirements for dependable AI-assisted academic verificati
     })
     .catch(console.error);
 </script>
-
 
 
 
