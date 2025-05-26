@@ -1,34 +1,40 @@
 {
   "models": [
     {
-      "name": "o3",
-      "recall": 21.1,
+      "name": "o3 (2025-04-16)",
       "precision": 6.1,
-      "pass@4": 15.3
+      "recall": 21.1,
+      "pass@4": 37.8
     },
     {
-      "name": "Gemini-2.5-Pro",
+      "name": "GPT-4.1 (2025-04-14)",
+      "precision": 2.8,
+      "recall": 6.0,
+      "pass@4": 17.8
+    },
+    {
+      "name": "Gemini-2.5-Pro (preview-03-25)",
+      "precision": 3.1,
       "recall": 10.1,
-      "precision": 1.1,
-      "pass@4": 7.8
+      "pass@4": 25.9
     },
     {
-      "name": "Claude-3.7-Sonnet",
-      "recall": 0.5,
-      "precision": 0.2,
-      "pass@4": 0.9
+      "name": "Gemini-2.0-Flash-Lite (001)",
+      "precision": 1.0,
+      "recall": 1.6,
+      "pass@4": 6.0
     },
     {
-      "name": "Qwen-2.5-VL-72B-Instruct",
-      "recall": 0.2,
-      "precision": 0.1,
-      "pass@4": 0.3
+      "name": "Claude-3.7-Sonnet (20250219:Think)",
+      "precision": 3.0,
+      "recall": 6.0,
+      "pass@4": 18.6
     },
     {
-      "name": "Llama-4-Maverick",
-      "recall": 0.1,
-      "precision": 0.05,
-      "pass@4": 0.2
+      "name": "Claude-3.7-Sonnet (20250219)",
+      "precision": 3.2,
+      "recall": 5.8,
+      "pass@4": 14.1
     }
   ]
 }
