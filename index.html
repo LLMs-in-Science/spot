@@ -292,6 +292,35 @@ capabilities and the requirements for dependable AI-assisted academic verificati
   </div>
 </section>
 
+<section id="evaluation" class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">📊 Evaluation Metrics & Main Results</h2>
+
+    <!-- 1) Quick intro to metrics -->
+    <p>
+      We evaluate verification performance via <strong>Precision</strong>, <strong>Recall</strong>, and <code>pass@K</code>.  
+      A predicted error is a <em>true positive</em> only when the model’s reported location matches a benchmark annotation (confirmed via GPT-4.1 similarity checks); all other flags count as false positives, and any missed annotations as false negatives:
+    </p>
+    <p>
+      <strong>Precision</strong> = TP / (TP + FP) penalizes spurious flags,  
+      while <strong>Recall</strong> = TP / (TP + FN) penalizes missed detections.  
+      To measure multi‐attempt gains, we report <code>pass@1</code> and <code>pass@4</code> over eight independent runs, bootstrapped 1,000×.
+    </p>
+
+    <!-- 2) Main results table -->
+    <figure class="image" style="max-width:900px; margin:1.5rem auto;">
+      <img src="static/images/table.png"
+           alt="Precision, Recall, pass@1, pass@4 for ten multi-modal LLMs on SPOT"
+           style="width:100%; height:auto;">
+    </figure>
+
+    <!-- 3) Highlight key takeaways -->
+    <p>
+      While o3 exceeds 80 % on general STEM benchmarks, its performance on HLE (hard, frontier-level questions) and on SPOT hovers around 20 %, underscoring the challenge of spotting real errors in scientific manuscripts.  
+      Notably, reasoning-focused models excel at equations but consistently falter on figure analysis, revealing a critical blind spot for AI Co-Scientists.
+    </p>
+  </div>
+</section>
 
   <section id="miscalibration" class="section">
   <div class="container is-max-desktop">
